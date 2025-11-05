@@ -11,6 +11,7 @@ export default defineConfig({
     'bg-reverse-white': 'bg-[var(--color-reverse-white)]',
     'bg-reverse-black': 'bg-[var(--color-reverse-black)]',
     'color-main': 'color-[var(--color-main-text)]',
+    'color-link': 'color-[var(--color-link)]',
     'gap-space': 'gap-[var(--space)]',
     'p-space': 'p-[var(--space)]',
     'px-space': 'px-[var(--space)]',

@@ -98,7 +98,7 @@ defineEmits(['click'])
   }
 
   &:hover:not(.disabled) {
-    opacity: .8;
+    opacity: .6;
   }
 
   &.primary {

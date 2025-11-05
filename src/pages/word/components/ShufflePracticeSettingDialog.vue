@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
 import Slider from "@/components/base/Slider.vue";
-import { defineAsyncComponent, watch } from "vue";
-import { useBaseStore } from "@/stores/base.ts";
+import {defineAsyncComponent, watch} from "vue";
+import {useBaseStore} from "@/stores/base.ts";
 
 const Dialog = defineAsyncComponent(() => import('@/components/dialog/Dialog.vue'))
 
@@ -20,6 +20,7 @@ let min = $ref(0)
 watch(() => model.value, (n) => {
   if (n) {
     num = Math.floor(store.sdict.lastLearnIndex / 3)
+    num = num > 50 ? 50 : num
     min = num < 10 ? num : 10
   }
 })
