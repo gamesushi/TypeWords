@@ -76,8 +76,8 @@ defineEmits(['click'])
   }
 
   &.small {
-    border-radius: 0.2rem;
-    padding: 0 0.8rem;
+    border-radius: 0.3rem;
+    padding: 0 0.6rem;
     height: 1.6rem;
     font-size: .8rem;
   }

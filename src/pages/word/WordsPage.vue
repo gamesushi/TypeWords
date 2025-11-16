@@ -225,8 +225,10 @@ const {
             </span>
             </div>
           </div>
-          <div class="flex mt-4 gap-4">
-            <BaseButton type="info" @click="router.push('/dict-list')">
+          <div class="flex items-center mt-4 gap-4">
+            <BaseButton type="info"
+                        size="small"
+                        @click="router.push('/dict-list')">
               <div class="center gap-1">
                 <IconFluentArrowSwap20Regular/>
                 <span>选择词典</span>
@@ -237,6 +239,7 @@ const {
                 title="当前存在未完成的学习任务，修改会重新生成学习任务，是否继续？"
                 @confirm="check(()=>showChangeLastPracticeIndexDialog = true)">
               <BaseButton type="info"
+                          size="small"
                           v-if="store.sdict.id"
               >
                 <div class="center gap-1">
@@ -310,7 +313,6 @@ const {
         </div>
         <div class="flex items-end mt-4">
           <BaseButton size="large"
-                      v-if="false"
                       class="flex-1"
                       :disabled="!store.sdict.id"
                       :loading="loading"
@@ -322,6 +324,7 @@ const {
           </BaseButton>
 
           <div
+              v-if="false"
               class="w-full flex box-border  cp  color-white">
             <div
                 @click="startPractice"
@@ -367,22 +370,21 @@ const {
             </div>
           </div>
 
-
-<!--          <BaseButton-->
-<!--              v-if="store.sdict.id && store.sdict.lastLearnIndex"-->
-<!--              size="large" type="orange"-->
-<!--              :loading="loading"-->
-<!--              @click="check(()=>showShufflePracticeSettingDialog = true)">-->
-<!--            <div class="flex items-center gap-2">-->
-<!--              <span class="line-height-[2]">随机复习</span>-->
-<!--              <IconFluentArrowShuffle20Filled class="text-xl"/>-->
-<!--            </div>-->
-<!--          </BaseButton>-->
+          <BaseButton
+              v-if="store.sdict.id && store.sdict.lastLearnIndex"
+              size="large" type="orange"
+              :loading="loading"
+              @click="check(()=>showShufflePracticeSettingDialog = true)">
+            <div class="flex items-center gap-2">
+              <span class="line-height-[2]">随机复习</span>
+              <IconFluentArrowShuffle20Filled class="text-xl"/>
+            </div>
+          </BaseButton>
         </div>
       </div>
     </div>
 
-    <div class="card  flex flex-col">
+    <div class="card flex flex-col">
       <div class="flex justify-between">
         <div class="title">我的词典</div>
         <div class="flex gap-4 items-center">
@@ -406,7 +408,7 @@ const {
       </div>
     </div>
 
-    <div class="card  flex flex-col overflow-hidden" v-loading="isFetching">
+    <div class="card flex flex-col overflow-hidden" v-loading="isFetching">
       <div class="flex justify-between">
         <div class="title">推荐</div>
         <div class="flex gap-4 items-center">
