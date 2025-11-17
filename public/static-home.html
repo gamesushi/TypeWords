@@ -327,61 +327,117 @@
 
     <script>
       function migrateFromOldDomain() {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
+          const OLD_ORIGIN = 'https://2study.top';
           const iframe = document.createElement('iframe');
           iframe.style.display = 'none';
-          iframe.src = 'https://2study.top/migrate.html';
-          document.body.appendChild(iframe);
+          iframe.src = OLD_ORIGIN + '/migrate.html';
 
-          // 接收数据
-          window.addEventListener('message', async function handler(e) {
-            if (e.data && e.data.type === 'responseData') {
-              // 写入 localStorage
-              const localData = e.data.localStorageData;
-              for (const key in localData) {
-                if (localData[key] !== null) localStorage.setItem(key, localData[key]);
+          // 超时保护
+          const TIMEOUT = 15000;
+          const timeoutId = setTimeout(() => {
+            cleanup();
+            reject(new Error('迁移超时：未收到老域名响应'));
+          }, TIMEOUT);
+
+          // 确保先监听消息
+          function messageHandler(e) {
+            try {
+              // 校验来源
+              if (e.origin !== OLD_ORIGIN) return;
+              if (!e.data || e.data.type !== 'responseData') return;
+
+              // 写 localStorage
+              const local = e.data.localStorageData || {};
+              for (const key in local) {
+                if (local[key] !== null) localStorage.setItem(key, local[key]);
               }
 
-              // 写入 IndexedDB
-              const indexedData = e.data.indexedDBData;
-              const request = indexedDB.open('type-words', 1);
-              request.onupgradeneeded = function (event) {
-                const db = event.target.result;
-                // 建 store
-                ['typing-word-dict', 'typing-word-setting', 'typing-word-files'].forEach(name => {
+              // 写 IndexedDB（简单实现：覆盖写入）
+              const indexed = e.data.indexedDBData || {};
+              const req = indexedDB.open('keyval-store', 1);
+
+              const keys = ['typing-word-dict', 'typing-word-setting', 'typing-word-files', 'type-words-app-version'];
+              req.onupgradeneeded = function (ev) {
+                const db = ev.target.result;
+                keys.forEach(name => {
                   if (!db.objectStoreNames.contains(name)) {
                     db.createObjectStore(name, {autoIncrement: true});
                   }
                 });
               };
-              request.onsuccess = function (event) {
-                const db = event.target.result;
-                const tx = db.transaction(['typing-word-dict', 'typing-word-setting', 'typing-word-files'], 'readwrite');
-                for (const storeName in indexedData) {
-                  const store = tx.objectStore(storeName);
-                  const items = indexedData[storeName];
-                  if (items) {
-                    items.forEach(item => store.put(item));
+              req.onsuccess = function (ev) {
+                const db = ev.target.result;
+                const tx = db.transaction(keys, 'readwrite');
+                tx.oncomplete = function () {
+                  clearTimeout(timeoutId);
+                  cleanup();
+                  resolve(true);
+                };
+                tx.onerror = function () {
+                  clearTimeout(timeoutId);
+                  cleanup();
+                  reject(new Error('写入 IndexedDB 出错'));
+                };
+                for (const storeName in indexed) {
+                  const items = indexed[storeName];
+                  if (Array.isArray(items)) {
+                    const store = tx.objectStore(storeName);
+                    items.forEach(item => {
+                      // 如果你的对象有主键 id，请改用 put(item, id)
+                      store.put(item);
+                    });
                   }
                 }
-                tx.oncomplete = function () {
-                  resolve(true);
-                  window.removeEventListener('message', handler);
-                  iframe.remove();
-                };
               };
-
-              // 发送请求
-              iframe.contentWindow.postMessage({type: 'requestData'}, 'https://2study.top');
+              req.onerror = function () {
+                clearTimeout(timeoutId);
+                cleanup();
+                reject(new Error('打开 IndexedDB 失败'));
+              };
+            } catch (err) {
+              clearTimeout(timeoutId);
+              cleanup();
+              reject(err);
             }
-          });
+          }
+
+          function cleanup() {
+            window.removeEventListener('message', messageHandler);
+            if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+          }
+
+          window.addEventListener('message', messageHandler);
+
+          // 把 iframe 插入 DOM，等待加载完成再发请求
+          iframe.onload = function () {
+            // 此时 iframe.contentWindow 应该可用，向老域名发送请求
+            try {
+              iframe.contentWindow.postMessage({type: 'requestData'}, OLD_ORIGIN);
+            } catch (err) {
+              clearTimeout(timeoutId);
+              cleanup();
+              reject(err);
+            }
+          };
+
+          document.body.appendChild(iframe);
         });
       }
 
+      // // 使用示例
+      // migrateFromOldDomain().then(() => {
+      //   console.log('迁移成功');
+      // }).catch(err => {
+      //   console.error('迁移失败', err);
+      // });
+
       if (location.href === 'https://typewords.cc/') {
-        migrateFromOldDomain().then(() => {
-          console.log('数据迁移完成！');
-        });
+        document.onload = function () {
+          migrateFromOldDomain().then(() => {
+            console.log('数据迁移完成！');
+          });
+        }
       }
     </script>
 </head>

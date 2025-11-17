@@ -8,14 +8,14 @@
 <script>
   async function readIndexedDB() {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open('type-words', 1); // 你的数据库名
+      const request = indexedDB.open('keyval-store', 1); // 你的数据库名
       request.onsuccess = function (event) {
         const db = event.target.result;
-        const tx = db.transaction(['typing-word-dict', 'typing-word-setting', 'typing-word-files'], 'readonly');
+        const keys = ['typing-word-dict', 'typing-word-setting', 'typing-word-files','type-words-app-version'];
+        const tx = db.transaction(keys, 'readonly');
         const result = {};
 
         let count = 0;
-        const keys = ['typing-word-dict', 'typing-word-setting', 'typing-word-files'];
         keys.forEach((storeName) => {
           const store = tx.objectStore(storeName);
           const allRequest = store.getAll();
@@ -38,7 +38,6 @@
       };
     });
   }
-
   // 监听 postMessage
   window.addEventListener('message', async (e) => {
     if (e.data && e.data.type === 'requestData') {
