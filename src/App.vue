@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { onMounted, watch } from "vue";
-import { BaseState, useBaseStore } from "@/stores/base.ts";
-import { useRuntimeStore } from "@/stores/runtime.ts";
-import { useSettingStore } from "@/stores/setting.ts";
+import {onMounted, watch} from "vue";
+import {BaseState, useBaseStore} from "@/stores/base.ts";
+import {useRuntimeStore} from "@/stores/runtime.ts";
+import {useSettingStore} from "@/stores/setting.ts";
 import useTheme from "@/hooks/theme.ts";
-import { loadJsLib, shakeCommonDict } from "@/utils";
-import { get, set } from 'idb-keyval'
+import {loadJsLib, shakeCommonDict} from "@/utils";
+import {get, set} from 'idb-keyval'
 
-import { useRoute } from "vue-router";
-import { DictId } from "@/types/types.ts";
-import { APP_VERSION, AppEnv, LOCAL_FILE_KEY, SAVE_DICT_KEY, SAVE_SETTING_KEY } from "@/config/env.ts";
-import { syncSetting } from "@/apis";
-import { useUserStore } from "@/stores/auth.ts";
+import {useRoute} from "vue-router";
+import {DictId} from "@/types/types.ts";
+import {APP_VERSION, AppEnv, LOCAL_FILE_KEY, Origin, SAVE_DICT_KEY, SAVE_SETTING_KEY} from "@/config/env.ts";
+import {syncSetting} from "@/apis";
+import {useUserStore} from "@/stores/auth.ts";
+import MigrateDialog from "@/pages/MigrateDialog.vue";
 
 const store = useBaseStore()
 const runtimeStore = useRuntimeStore()
@@ -77,31 +78,16 @@ async function init() {
 
 onMounted(init)
 
-onMounted(()=>{
-  return
-  // const iframe = document.createElement('iframe');
-  // iframe.style.display = 'none';
-  // iframe.src = `https://2study.top/migrate.html`;
-  // function onMessage(event) {
-  //   if (event.data?.type !== 'MIGRATION_RESULT') return;
-  //
-  //   const payload = event.data.payload;
-  //   console.log('payload',payload)
-  // }
-  //
-  // window.addEventListener('message', onMessage);
-  // iframe.onload = () => {
-  //   setTimeout(()=>{
-  //     iframe.contentWindow.postMessage({type: 'REQUEST_MIGRATION_DATA'}, 'https://2study.top');
-  //   },3000)
-  // };
-  // document.body.appendChild(iframe);
-  //
-  // (async () => {
-  //   const db = await loadIDBKeyval(); // 确保 idb-keyval 已经加载
-  //   const data = await readAllStorageForMigration(db);
-  //   console.log('data',data)
-  // })()
+
+//迁移数据
+let showTransfer = $ref(false)
+onMounted(() => {
+  if (new URLSearchParams(window.location.search).get('from_old_site') === '1' && location.origin === Origin) {
+    if (localStorage.getItem('__migrated_from_2study_top__')) return;
+    setTimeout(() => {
+      showTransfer = true
+    }, 1000)
+  }
 })
 
 // let transitionName = $ref('go')
@@ -136,4 +122,5 @@ onMounted(()=>{
   <!--    </transition>-->
   <!--  </router-view>-->
   <router-view></router-view>
+  <MigrateDialog v-model="showTransfer"/>
 </template>
