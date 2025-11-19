@@ -109,6 +109,7 @@ declare module 'vue' {
     IconSimpleIconsWechat: typeof import('~icons/simple-icons/wechat')['default']
     IconStreamlineDiscountPercentCoupon: typeof import('~icons/streamline/discount-percent-coupon')['default']
     IconSystemUiconsImport: typeof import('~icons/system-uicons/import')['default']
+    IconUiwAlipay: typeof import('~icons/uiw/alipay')['default']
     InputNumber: typeof import('./src/components/base/InputNumber.vue')['default']
     List: typeof import('./src/components/list/List.vue')['default']
     Logo: typeof import('./src/components/Logo.vue')['default']

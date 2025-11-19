@@ -55,6 +55,19 @@ export function uploadImportData(data, onUploadProgress) {
     headers: {
       contentType: 'formdata',
     },
+    timeout: 1000000000,
+    data,
+    onUploadProgress
+  })
+}
+
+export function upload(data, onUploadProgress) {
+  return axiosInstance({
+    url: 'file/upload',
+    method: 'post',
+    headers: {
+      contentType: 'formdata',
+    },
     data,
     onUploadProgress
   })

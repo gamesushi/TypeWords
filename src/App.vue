@@ -11,7 +11,7 @@ import {useRoute} from "vue-router";
 import {DictId} from "@/types/types.ts";
 import {APP_VERSION, AppEnv, LOCAL_FILE_KEY, Origin, SAVE_DICT_KEY, SAVE_SETTING_KEY} from "@/config/env.ts";
 import {syncSetting} from "@/apis";
-import {useUserStore} from "@/stores/auth.ts";
+import {useUserStore} from "@/stores/user.ts";
 import MigrateDialog from "@/pages/MigrateDialog.vue";
 
 const store = useBaseStore()
