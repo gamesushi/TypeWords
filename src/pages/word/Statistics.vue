@@ -139,131 +139,133 @@ calcWeekList(); // 新增：计算本周学习记录
       :keyboard="false"
       :show-close="false"
       class="statistics-modal">
-    <div class="p-8 pr-3 bg-white rounded-2xl gap-3 flex">
-      <div class="space-y-6">
-        <!-- Header Section -->
-        <div class="text-center relative">
-          <div
-              class="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-500 to-purple-700 bg-clip-text text-transparent">
-            <template v-if="practiceTaskWords.shuffle.length">
-              🎯 随机复习完成
-            </template>
-            <template v-else>
-              🎉 今日任务完成
-            </template>
-          </div>
-          <p class="font-medium text-lg">{{ encouragementText }}</p>
+    <div class="p-8 pr-3 bg-white rounded-2xl space-y-6">
+      <!-- Header Section -->
+      <div class="text-center relative">
+        <div
+          class="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-500 to-purple-700 bg-clip-text text-transparent">
+          <template v-if="practiceTaskWords.shuffle.length">
+            🎯 随机复习完成
+          </template>
+          <template v-else>
+            🎉 今日任务完成
+          </template>
+        </div>
+        <p class="font-medium text-lg">{{ encouragementText }}</p>
+      </div>
+
+      <!-- Main Stats Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Study Time -->
+        <div class="item">
+          <IconFluentClock20Regular class="text-purple-500"/>
+          <div class="text-sm text-gray-600 mb-1 font-medium">学习时长</div>
+          <div class="text-xl font-bold text-gray-900">{{ formattedStudyTime }}</div>
         </div>
 
-        <!-- Main Stats Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <!-- Study Time -->
-          <div class="item">
-            <IconFluentClock20Regular class="text-purple-500"/>
-            <div class="text-sm text-gray-600 mb-1 font-medium">学习时长</div>
-            <div class="text-xl font-bold text-gray-900">{{ formattedStudyTime }}</div>
-          </div>
-
-          <!-- Accuracy Rate -->
-          <div class="item">
-            <IconFluentTarget20Regular class="text-purple-500"/>
-            <div class="text-sm text-gray-600 mb-1 font-medium">正确率</div>
-            <div class="text-xl font-bold text-gray-900 mb-2">{{ accuracyRate }}%</div>
-            <div class="w-full bg-gray-200 rounded-full h-1" v-if="false">
-              <div
-                  class="h-1 rounded-full transition-all duration-300"
-                  :class="{
+        <!-- Accuracy Rate -->
+        <div class="item">
+          <IconFluentTarget20Regular class="text-purple-500"/>
+          <div class="text-sm text-gray-600 mb-1 font-medium">正确率</div>
+          <div class="text-xl font-bold text-gray-900 mb-2">{{ accuracyRate }}%</div>
+          <div class="w-full bg-gray-200 rounded-full h-1" v-if="false">
+            <div
+              class="h-1 rounded-full transition-all duration-300"
+              :class="{
                 'bg-green-500': accuracyRate >= 95,
                 'bg-yellow-500': accuracyRate >= 85 && accuracyRate < 95,
                 'bg-red-500': accuracyRate < 85
               }"
-                  :style="{ width: accuracyRate + '%' }">
-              </div>
+              :style="{ width: accuracyRate + '%' }">
             </div>
-          </div>
-
-          <!-- New Words -->
-          <div class="item">
-            <IconFluentSparkle20Regular class="text-purple-500"/>
-            <div class="text-sm text-gray-600 mb-1 font-medium">新词</div>
-            <div class="text-xl font-bold text-gray-900">{{ statStore.newWordNumber }}</div>
-          </div>
-
-          <!-- New Words -->
-          <div class="item">
-            <IconFluentBook20Regular class="text-purple-500"/>
-            <div class="text-sm text-gray-600 mb-1 font-medium">复习</div>
-            <div class="text-xl font-bold text-gray-900">{{ statStore.newWordNumber }}</div>
           </div>
         </div>
 
-        <!-- Weekly Progress -->
-        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-2">
-          <div class="text-center mb-4">
-            <div class="text-xl font-semibold text-gray-900 mb-1">本周学习记录</div>
-          </div>
-          <div class="flex justify-between gap-4">
-            <div
+        <!-- New Words -->
+        <div class="item">
+          <IconFluentSparkle20Regular class="text-purple-500"/>
+          <div class="text-sm text-gray-600 mb-1 font-medium">新词</div>
+          <div class="text-xl font-bold text-gray-900">{{ statStore.newWordNumber }}</div>
+        </div>
+
+        <!-- New Words -->
+        <div class="item">
+          <IconFluentBook20Regular class="text-purple-500"/>
+          <div class="text-sm text-gray-600 mb-1 font-medium">复习</div>
+          <div class="text-xl font-bold text-gray-900">{{ statStore.reviewWordNumber + statStore.writeWordNumber }}</div>
+        </div>
+      </div>
+
+      <div class="w-full gap-3 flex">
+        <div class="space-y-6 flex-1">
+
+          <!-- Weekly Progress -->
+          <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-2">
+            <div class="text-center mb-4">
+              <div class="text-xl font-semibold text-gray-900 mb-1">本周学习记录</div>
+            </div>
+            <div class="flex justify-between gap-4">
+              <div
                 v-for="(item, i) in list"
                 :key="i"
                 class="flex-1 text-center px-2 py-3 rounded-lg"
                 :class="item ? 'bg-green-500 text-white shadow-lg' : 'bg-white text-gray-700'"
-            >
-              <div class="font-semibold mb-1">{{ i + 1 }}</div>
-              <div class="w-2 h-2 rounded-full mx-auto mb-1"
-                   :class="item ? 'bg-white bg-opacity-30' : 'bg-gray-300'"></div>
+              >
+                <div class="font-semibold mb-1">{{ i + 1 }}</div>
+                <div class="w-2 h-2 rounded-full mx-auto mb-1"
+                     :class="item ? 'bg-white bg-opacity-30' : 'bg-gray-300'"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress Overview -->
+          <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl py-2 px-6">
+            <div class="flex justify-between items-center mb-3">
+              <div class="text-xl font-semibold text-gray-900">学习进度</div>
+              <div class="text-2xl font-bold text-purple-600">{{ studyProgress }}%</div>
+            </div>
+            <Progress :percentage="studyProgress" size="large" :show-text="false"/>
+            <div class="flex justify-between text-sm text-gray-600 font-medium mt-4">
+              <span>已学习: {{ store.sdict.lastLearnIndex }}</span>
+              <span>总词数: {{ store.sdict.length }}</span>
             </div>
           </div>
         </div>
-
-        <!-- Progress Overview -->
-        <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl py-2 px-6">
-          <div class="flex justify-between items-center mb-3">
-            <div class="text-xl font-semibold text-gray-900">学习进度</div>
-            <div class="text-2xl font-bold text-purple-600">{{ studyProgress }}%</div>
+        <ChannelIcons/>
+      </div>
+      <!-- Action Buttons -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <BaseButton
+          :keyboard="settingStore.shortcutKeyMap[ShortcutKey.RepeatChapter]"
+          @click="options(EventKey.repeatStudy)">
+          <div class="center gap-2">
+            <IconFluentArrowClockwise20Regular/>
+            重学一遍
           </div>
-          <Progress :percentage="studyProgress" size="large" :show-text="false"/>
-          <div class="flex justify-between text-sm text-gray-600 font-medium mt-4">
-            <span>已学习: {{ store.sdict.lastLearnIndex }}</span>
-            <span>总词数: {{ store.sdict.length }}</span>
-          </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <BaseButton
-              :keyboard="settingStore.shortcutKeyMap[ShortcutKey.RepeatChapter]"
-              @click="options(EventKey.repeatStudy)">
-            <div class="center gap-2">
-              <IconFluentArrowClockwise20Regular/>
-              重学一遍
-            </div>
-          </BaseButton>
-          <BaseButton
-              :keyboard="settingStore.shortcutKeyMap[ShortcutKey.NextChapter]"
-              @click="options(EventKey.continueStudy)"
-              class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-              :class="dictIsEnd ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white' : 'bg-gradient-to-r from-green-500 to-green-600 text-white'">
+        </BaseButton>
+        <BaseButton
+          :keyboard="settingStore.shortcutKeyMap[ShortcutKey.NextChapter]"
+          @click="options(EventKey.continueStudy)">
+          <div class="center gap-2">
             <IconFluentPlay20Regular/>
             {{ dictIsEnd ? '从头开始练习' : '再来一组' }}
-          </BaseButton>
-          <BaseButton
-              :keyboard="settingStore.shortcutKeyMap[ShortcutKey.NextRandomWrite]"
-              @click="options(EventKey.randomWrite)">
-            <div class="center gap-2">
-              <IconFluentPen20Regular/>
-              继续默写
-            </div>
-          </BaseButton>
-          <BaseButton @click="$router.back">
-            <div class="center gap-2">
-              <IconFluentHome20Regular/>
-              返回主页
-            </div>
-          </BaseButton>
-        </div>
+          </div>
+        </BaseButton>
+        <BaseButton
+          :keyboard="settingStore.shortcutKeyMap[ShortcutKey.NextRandomWrite]"
+          @click="options(EventKey.randomWrite)">
+          <div class="center gap-2">
+            <IconFluentPen20Regular/>
+            继续默写
+          </div>
+        </BaseButton>
+        <BaseButton @click="$router.back">
+          <div class="center gap-2">
+            <IconFluentHome20Regular/>
+            返回主页
+          </div>
+        </BaseButton>
       </div>
-      <ChannelIcons/>
     </div>
   </Dialog>
 </template>
